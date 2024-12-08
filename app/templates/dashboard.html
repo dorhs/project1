@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #007bff;
+            --highlight-color: #ffffff;
+            --text-color: #ffffff;
+            --card-bg: #007bff;
+            --button-bg: #28a745;
+            --button-hover-bg: #ffffff;
+            --logout-bg: #dc3545;
+            --logout-hover-bg: #a71d2b;
+            --shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            --hover-bg: #0056b3;  
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: var(--highlight-color);
+            position: relative; 
+        }
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            color: rgb(235, 8, 8);
+            padding: 20px;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--hover-bg); 
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px; 
+            border: 2px solid white; 
+            border-radius: 6px; 
+            padding: 10px 20px;
+            background-color: var(--logout-bg); 
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--logout-hover-bg); 
+            transform: scale(1.05); 
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex-grow: 1;
+        }
+
+        .main-content h1 {
+            font-size: 36px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .card:hover {
+            box-shadow: 0px 12px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .card p {
+            font-size: 18px;
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        .button {
+            background-color: var(--button-bg);
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .table_card table {
+            width: 100%;
+            background-color: white;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table_card thead {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: left;
+        }
+
+        .table_card th,
+        .table_card td {
+            padding: 12px 15px;
+        }
+
+        .table_card th {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .table_card tbody tr:nth-child(even) {
+            background-color: #f4f4f4;
+        }
+
+        .table_card tbody tr:nth-child(odd) {
+            background-color: #eaf3ff;
+        }
+
+        .table_card tbody tr:hover {
+            background-color: #cde3ff;
+            transition: background-color 0.3s ease;
+        }
+
+        .table_card tbody td {
+            color: var(--primary-color);
+        }
+
+        .table_card tbody td button {
+            padding: 6px 12px;
+            font-size: 14px;
+            color: white;
+            background-color: var(--button-bg);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .table_card tbody td button:hover {
+            background-color: var(--button-hover-bg);
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f4f9;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('auth.logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    <div class="sidebar">
+        <h2>Dashboard {{ username }}</h2>
+        <a href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Profile</a>
+        <a href="{{ url_for('domain.add_domain') }}"><i class="fas fa-plus-circle"></i> Add Domain</a>
+        <a href="{{ url_for('domain.bulk_upload_domains') }}"><i class="fas fa-file-alt"></i> Add Domain File</a>
+    </div>
+    <div class="main-content">
+        <h1>Welcome to the Dashboard</h1>
+        <div class="card">
+            <h3>Overview</h3>
+            <p>This section provides an overview of your current domains, files, and activities. Check here for updates and important notifications.</p>
+        </div>
+        <div class="card table_card">
+            <h3>Domain List</h3>
+            <table border="1" id="domainsTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Domain</th>
+                        <th onclick="sortTable(1)">Status</th>
+                        <th onclick="sortTable(2)">SSL Expiration</th>
+                        <th onclick="sortTable(3)">SSL Issuer</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for domain in domains %}
+                    <tr data-domain="{{ domain['domain'] }}">
+                        <td>{{ domain['domain'] }}</td>
+                        <td class="status">{{ domain['status'] }}</td>
+                        <td class="ssl-expiration">{{ domain['ssl_expiration'] }}</td>
+                        <td class="ssl-issuer">{{ domain['ssl_issuer'] }}</td>
+                        <td>
+                            <button type="button" onclick="updateDomain('{{ domain['domain'] }}')">Update</button>
+                        </td>
+                        <td>
+                            <button type="button" onclick="deleteDomain('{{ domain['domain'] }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 DevOpsProject Dor Hassan</p>
+        </div>
+    </div>
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        function updateDomain(domain) {
+            fetch('/api/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({ domain })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);  
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteDomain(domain) {
+            fetch('/api/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({ domain })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`tr[data-domain="${domain}"]`).remove();
+                }
+                alert(data.message);  
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function sortTable(n) {
+            const table = document.getElementById('domainsTable');
+            let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            switching = true;
+            dir = 'asc';
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < rows.length - 1; i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName('TD')[n];
+                    y = rows[i + 1].getElementsByTagName('TD')[n];
+                    if (dir === 'asc' && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    } else if (dir === 'desc' && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount === 0 && dir === 'asc') {
+                        dir = 'desc';
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

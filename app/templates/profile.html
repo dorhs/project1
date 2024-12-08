@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #444;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            border-bottom: 2px solid #f4f4f4;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            color: #333;
+        }
+
+        .profile-header p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        form {
+            margin: 20px 0;
+        }
+
+        form label {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        form input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+    .alert-status {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: bold;
+        color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .alert-status-success {
+        background-color: #28a745; 
+        border: 1px solid #218838; 
+    }
+
+    .alert-status-danger {
+        background-color: #dc3545; 
+        border: 1px solid #c82333; 
+    }
+
+        form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        form button:hover {
+            background: #2980b9;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dashboard-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            background: #3abc00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dashboard-btn:hover {
+            background: #74df44 ;
+        }
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 10px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .error-message.with-background {
+            background-color: #f8d7da;  
+            color: #721c24;           
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb; 
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;  
+            background-color: #f8d7da; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <h1><strong>{{ username }}</strong> User Profile</h1>
+            <p>Welcome, <strong>{{ username }}</strong></p>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div>
+                    {% for category, message in messages %}
+                        <div class="alert-status alert-status-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.profile') }}">
+            {{ form.hidden_tag() }}
+            <label for="current_password">Current Password:</label>
+            <input type="password" class="form-control {{ 'is-invalid' if form.current_password.errors else '' }}" id="current_password" name="current_password" />
+            {% if form.current_password.errors %}
+                <div class="error-message with-background">
+                    {{ form.current_password.errors[0] }}
+                </div>
+            {% endif %}
+
+            <label for="new_password">New Password:</label>
+            <input type="password" class="form-control {{ 'is-invalid' if form.new_password.errors else '' }}" id="new_password" name="new_password" />
+            {% if form.new_password.errors %}
+                <div class="error-message with-background">
+                    {{ form.new_password.errors[0] }}
+                </div>
+            {% endif %}
+
+            <label for="confirm_password">Confirm New Password:</label>
+            <input type="password" class="form-control {{ 'is-invalid' if form.confirm_password.errors else '' }}" id="confirm_password" name="confirm_password" />
+            {% if form.confirm_password.errors %}
+                <div class="error-message with-background">
+                    {{ form.confirm_password.errors[0] }}
+                </div>
+            {% endif %}
+
+            <button type="submit">Change Password</button>
+        </form>
+        <form action="{{ url_for('auth.dashboard') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <button class="dashboard-btn" type="submit">Return Dashboard</button>
+        </form>
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <button class="logout-btn" type="submit">Logout</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 DevOpsProject Dor Hassan</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upload a file to bulk upload domains to the system.">
+    <meta name="keywords" content="Bulk Upload, Domains, File Upload">
+    <title>Bulk Upload Domains</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fb;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 34px;
+            color: #007bff;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 30px;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .file-input-container {
+            display: flex;
+            margin: 30px;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .choose-file-button {
+            padding: 12px 20px;
+            margin: 30px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .choose-file-button:hover {
+            background-color: #0056b3;
+        }
+
+        .file-name {
+            flex-grow: 1; 
+            font-size: 14px;
+            color: #333;
+            text-align: left;
+            margin: 30px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #f1f1f1;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%; 
+        }
+
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-container .message {
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+            display: block;
+        }
+
+        .form-container .success {
+            color: green;
+            background-color: #e6ffe6;
+            border: 1px solid green;
+        }
+
+        .form-container .error {
+            color: red;
+            background-color: #ffe6e6;
+            border: 1px solid red;
+        }
+
+        .button-container {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .button-container a {
+            padding: 14px 30px;
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container a:hover {
+            background-color: #218838;
+        }
+
+        .button-container a.logout {
+            background-color: #dc3545;
+        }
+
+        .button-container a.logout:hover {
+            background-color: #c82333;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f4f9;
+        }
+
+        @media (max-width: 768px) {
+            .file-input-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .file-name {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 26px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-container input[type="file"],
+            .form-container button {
+                font-size: 14px;
+            }
+
+            .footer {
+                font-size: 12px;
+            }
+        }
+
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Bulk Upload Domains</h1>
+        <div class="form-container">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="file-input-container">
+                    <label for="fileField" class="choose-file-button">Choose File</label>
+                    {{ form.file(class="file-input", id="fileField", onchange="updateFileName()") }}
+                    <div id="fileName" class="file-name">No file chosen</div>
+                </div>
+                <button type="submit" class="upload-button">Upload</button>
+                {% for error in form.file.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </form>
+            {% if error %}
+                {% if Mode %}
+                    <div class="message success">{{ error }}</div>
+                {% else %}
+                    <div class="message error">{{ error }}</div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="button-container">
+            <a href="{{ url_for('auth.dashboard') }}" class="home-button">Back to Dashboard</a>
+            <a href="{{ url_for('auth.logout') }}" class="logout">Logout</a>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 DevOpsProject Dor Hassan</p>
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+    function updateFileName() {
+        var fileInput = document.getElementById("fileField");
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : "No file chosen";
+        document.getElementById("fileName").textContent = fileName;
+    }
+    document.querySelector('.submit-button').addEventListener('click', function () {
+        document.getElementById('fileField').click();
+        updateFileName();
+    });
+    </script>
+
+</body>
+</html>
