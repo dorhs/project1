@@ -1,0 +1,28 @@
+(SOP) -- > Standard operating procedure --- > is a set of step-by-step instructions compiled by an organization to help workers carry out routine operations.
+
+*lounch instance in AWS
+
+1.Connect to the instance:
+ssh -i your-key.pem ubuntu@your-ec2-public-ip
+
+2.Update the System:
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3-pip python3-venv -y
+
+3.Transfer Your Flask App:
+git clone -b Denis_Liveness_ssl https://github.com/Idayan88/project1.git 
+
+*enter project folder
+cd/DomainMonitoringSystemv1.0.0
+
+4.Set Up a Python Virtual Environment:
+python3 -m venv venv
+source venv/bin/activate
+
+
+5.Install dependencies:
+pip install -r requirements.txt
+
+
+Run the app:
+python3 app.py
