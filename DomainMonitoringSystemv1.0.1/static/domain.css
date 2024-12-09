@@ -1,0 +1,207 @@
+/* Global styles */
+body {
+    background-color: #121212; /* Dark background */
+    color: #00bcd4; /* Blue text color */
+    font-family: 'Arial', sans-serif; /* Clean and modern font */
+    margin: 0;
+    padding: 0;
+}
+
+/* Styling for the outer div container */
+div {
+    width: 80%; /* Makes the content take 80% of the screen width */
+    margin: 0 auto; /* Centers the content horizontally */
+    padding: 20px;
+    background-color: #1e1e1e; /* Slightly lighter background */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-top: 30px;
+}
+
+/* Header styles */
+h1, h2 {
+    text-align: center;
+    color: #00bcd4;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Styling for form container */
+form {
+    display: flex;
+    flex-wrap: wrap; /* Allow inputs to wrap to the next line if necessary */
+    gap: 10px; /* Space between form elements */
+    align-items: center; /* Align form elements in the same row */
+    margin-top: 20px;
+}
+
+/* Styling for domain form elements */
+#domain-form {
+    display: flex;
+    gap: 10px; /* Space between form elements */
+    align-items: center;
+}
+
+/* Styling for domain form label */
+#domain-form label {
+    font-size: 16px;
+    color: #00bcd4;
+    margin-right: 10px;
+}
+
+/* Styling for domain form input */
+#domain-form input {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border: 2px solid #00bcd4;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+/* Styling for domain form button */
+#domain-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #00bcd4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#domain-form button:hover {
+    background-color: #0097a7;
+}
+
+/* Styling for the schedule form elements */
+#schedule-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Styling for schedule form label */
+#schedule-form label {
+    font-size: 16px;
+    color: #00bcd4;
+}
+
+/* Styling for number input and time input in schedule form */
+#schedule-form input[type="number"],
+#schedule-form input[type="time"] {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border: 2px solid #00bcd4;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    width: 120px; /* Ensures inputs have a consistent width */
+}
+
+/* Styling for schedule form button */
+#schedule-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #00bcd4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#schedule-form button:hover {
+    background-color: #0097a7;
+}
+
+/* Styling for the message below the schedule form */
+#schedule-message {
+    text-align: center;
+    color: #00bcd4;
+    font-size: 16px;
+    margin-top: 20px;
+}
+/* Table styles */
+table {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: #222;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: center;
+}
+
+table th {
+    background-color: #00bcd4;
+    color: #fff;
+    font-size: 18px;
+}
+
+table td {
+    background-color: #333;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #444;
+}
+
+table tr:hover {
+    background-color: #555;
+    cursor: pointer;
+}
+
+table button.remove-btn {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table button.remove-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Pagination styles */
+#pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pagination button {
+    padding: 8px 16px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #00bcd4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#pagination button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+#pagination button:hover {
+    background-color: #0097a7;
+}
+
+#page-number {
+    color: #fff;
+    font-size: 16px;
+    margin: 0 20px;
+}

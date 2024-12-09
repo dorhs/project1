@@ -1,0 +1,62 @@
+[
+    {
+        "domain": "google.com",
+        "status": "Up",
+        "ssl_expiration": "2025-01-13",
+        "ssl_issuer": "Google Trust Services"
+    },
+    {
+        "domain": "idigital.com",
+        "status": "Down",
+        "ssl_expiration": "N/A",
+        "ssl_issuer": "Unknown"
+    },
+    {
+        "domain": "www.oracle.com",
+        "status": "Up",
+        "ssl_expiration": "2025-05-09",
+        "ssl_issuer": "DigiCert Inc"
+    },
+    {
+        "domain": "nnnn.com",
+        "status": "Down",
+        "ssl_expiration": "N/A",
+        "ssl_issuer": "Unknown"
+    },
+    {
+        "domain": "idigital.co.il",
+        "status": "Up",
+        "ssl_expiration": "2025-01-11",
+        "ssl_issuer": "Sectigo Limited"
+    },
+    {
+        "domain": "baha.com",
+        "status": "Up",
+        "ssl_expiration": "2025-03-14",
+        "ssl_issuer": "Sectigo Limited"
+    },
+    {
+        "domain": "wix.com",
+        "status": "Up",
+        "ssl_expiration": "2025-02-16",
+        "ssl_issuer": "Let's Encrypt"
+    },
+    {
+        "domain": "google.co.il",
+        "status": "Up",
+        "ssl_expiration": "2025-01-13",
+        "ssl_issuer": "Google Trust Services"
+    },
+    {
+        "domain": "chatgpt.com",
+        "status": "Down (403)",
+        "ssl_expiration": "2025-02-19",
+        "ssl_issuer": "Let's Encrypt"
+    },
+    {
+        "domain": "www.python.org",
+        "status": "Up",
+        "ssl_expiration": "2025-06-10",
+        "ssl_issuer": "GlobalSign nv-sa"
+    }
+]
