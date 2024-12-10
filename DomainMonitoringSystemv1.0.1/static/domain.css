@@ -5,6 +5,11 @@ body {
     font-family: 'Arial', sans-serif; /* Clean and modern font */
     margin: 0;
     padding: 0;
+    background-image: url('tpp.gif'); /* Add background image */
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    color: #fff; /* White text for contrast */
 }
 
 /* Styling for the outer div container */
@@ -12,7 +17,7 @@ div {
     width: 80%; /* Makes the content take 80% of the screen width */
     margin: 0 auto; /* Centers the content horizontally */
     padding: 20px;
-    background-color: #1e1e1e; /* Slightly lighter background */
+    background-color: #172f7da3; /* Slightly lighter background */
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     margin-top: 30px;
