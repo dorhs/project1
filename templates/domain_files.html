@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Domain</title>
+    <script>
+        async function addDomain() {
+            // Get domain value from input field
+            const domain = document.getElementById('domain').value.trim();
+
+            if (!domain) {
+                alert("Please enter a domain.");
+                return;
+            }
+
+            try {
+                // Make AJAX request to the Flask backend
+                const response = await fetch('/add_domain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ domain: domain }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`Domain ${data.domain} added successfully!`);
+                    // Clear input field
+                    document.getElementById('domain').value = '';
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                alert('An error occurred while adding the domain.');
+                console.error(error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Domain</h1>
+    <form onsubmit="event.preventDefault(); addDomain();">
+        <label for="domain">Domain:</label>
+        <input type="text" id="domain" name="domain" required>
+        <button type="submit">Add Domain</button>
+    </form>
+    <br>
+    <a href="/dashboard">Back to Dashboard</a>
+</body>
+</html>

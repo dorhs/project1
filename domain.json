@@ -1,0 +1,14 @@
+[
+    {
+        "domain": "google.com",
+        "status": "Down (429)",
+        "ssl_expiration": "2025-01-27",
+        "ssl_issuer": "Google Trust Services"
+    },
+    {
+        "domain": "oracle.com",
+        "status": "Up",
+        "ssl_expiration": "2025-02-25",
+        "ssl_issuer": "DigiCert Inc"
+    }
+]
