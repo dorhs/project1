@@ -1,31 +1,19 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from authlib.integrations.flask_client import OAuth
-import json
-import os
 import json
 import os
 import ssl
 import socket
-
 from flask_apscheduler import APScheduler
-
+from urllib.parse import urlparse
 from datetime import datetime
 import requests
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
-
-
-
 # Path to JSON file
 DOMAIN_FILE = "domain.json"
- 
-
-
-
-  
-
 
 # Initialize APScheduler
 scheduler = APScheduler()
@@ -88,24 +76,32 @@ def update_schedule():
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-
-
-
-
-
 def load_domains():
-    """Load domains from the JSON file."""
+    """Load domains from the JSON file, filtering by logged-in user."""
     if os.path.exists(DOMAIN_FILE):
         with open(DOMAIN_FILE, "r") as file:
-            return json.load(file)
+            domains = json.load(file)
+            # Filter domains by the current logged-in user
+            if 'user' in session:
+                return [d for d in domains if d.get("username") == session['user']]
     return []
-
 
 def save_domains(domains):
     """Save domains to the JSON file."""
-    with open(DOMAIN_FILE, "w") as file:
-        json.dump(domains, file, indent=4)
+    if os.path.exists(DOMAIN_FILE):
+        with open(DOMAIN_FILE, "r") as file:
+            existing_domains = json.load(file)
+    else:
+        existing_domains = []
 
+    # Add or update domains for the current user
+    for domain in domains:
+        # Check if the domain already exists for the user, if not, add it
+        existing_domains = [d for d in existing_domains if d["domain"] != domain["domain"] or d["username"] != session.get("user")]
+        existing_domains.append(domain)
+
+    with open(DOMAIN_FILE, "w") as file:
+        json.dump(existing_domains, file, indent=4)
 
 def get_ssl_info(domain):
     """Retrieve SSL expiration and issuer information for a domain."""
@@ -126,7 +122,6 @@ def get_ssl_info(domain):
             "ssl_issuer": "Unknown"
         }
 
-
 def check_domain_status(domain):
     """Check if a domain is alive or down."""
     try:
@@ -141,7 +136,6 @@ def load_users():
         with open('users.json', 'r') as f:
             return json.load(f)
     return []
-
 
 # Save users to JSON file
 def save_users(users):
@@ -170,7 +164,7 @@ def login():
 
         users = load_users()
         user = next((u for u in users if u["username"] == username and u["password"] == password), None)
-
+       
         if user:
             session["user"] = username
             return jsonify({"message": "Login successful!"}), 200
@@ -178,8 +172,6 @@ def login():
             return jsonify({"message": "Invalid username or password!"}), 401
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
-
-
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -201,16 +193,11 @@ def register():
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
 
-# @app.route('/dashboard')
-# def dashboard():
-#     if 'user' in session:
-#         return f"Welcome, {session['user']}! <a href='/logout'>Logout</a>"
-#     return redirect(url_for('home'))
-
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect(url_for('home'))
+
 @app.route('/get_domains', methods=['GET'])
 def get_domains():
     """Return the list of domains."""
@@ -218,8 +205,11 @@ def get_domains():
 
 @app.route('/dashboard')
 def dashboard():
-    """Render the main page."""
-    return render_template('domain.html')
+    username = session.get("user")  # Retrieve the username from the session
+    if username:  # Check if the user is logged in
+        return render_template('Domain.html', username=username)
+    else:
+        return redirect("/")  # Redirect to login page if not logged in
 
 @app.route('/add_domain', methods=['POST'])
 def add_domain():
@@ -230,20 +220,26 @@ def add_domain():
     if not domain:
         return jsonify({"error": "Domain is required."}), 400
 
+    # Clean domain by removing schemes and www
+    parsed_url = urlparse(domain)
+    clean_domain = parsed_url.netloc or parsed_url.path
+    clean_domain = clean_domain.lstrip("www.")
+
     domains = load_domains()
 
-    if any(d["domain"] == domain for d in domains):
+    if any(d["domain"] == clean_domain for d in domains):
         return jsonify({"error": "Domain already exists."}), 400
 
     # Check domain status and SSL information
-    status = check_domain_status(domain)
-    ssl_info = get_ssl_info(domain)
+    status = check_domain_status(clean_domain)
+    ssl_info = get_ssl_info(clean_domain)
 
     domain_entry = {
-        "domain": domain,
+        "domain": clean_domain,
         "status": status,
         "ssl_expiration": ssl_info["ssl_expiration"],
-        "ssl_issuer": ssl_info["ssl_issuer"]
+        "ssl_issuer": ssl_info["ssl_issuer"],
+        "username": session.get("user")  # Associate domain with current logged-in user
     }
 
     domains.append(domain_entry)
@@ -251,6 +247,24 @@ def add_domain():
 
     return jsonify(domain_entry)
 
+@app.route('/add_domain_page')
+def add_domain_page():
+    """Render the add domain HTML page."""
+    username = session.get("user")  # Retrieve the username from the session
+    if username:  # Check if the user is logged in
+        return render_template('add_domain.html', username=username)
+    else:
+        return redirect("/")  # Redirect to login page if not logged in
+
+@app.route('/domain_files')
+def domain_files():
+    """Render the add domain HTML page."""
+    username = session.get("user")  # Retrieve the username from the session
+
+    if username:  # Check if the user is logged in
+            return render_template('domain_files.html', username=username)
+    else:
+            return redirect("/")  # Redirect to login page if not logged in
 
 @app.route('/remove_domain', methods=['POST'])
 def remove_domain():
@@ -270,5 +284,44 @@ def remove_domain():
     save_domains(updated_domains)
     return jsonify({"message": f"Domain {domain} removed successfully."})
 
+@app.route('/upload_domains', methods=['POST'])
+def upload_domains():
+    """Handle the upload of a TXT file with domains."""
+    file = request.files.get('file')
+
+    if not file:
+        return jsonify({"error": "No file provided."}), 400
+
+    # Ensure the file is a TXT file
+    if not file.filename.endswith('.txt'):
+        return jsonify({"error": "Please upload a .txt file."}), 400
+
+    try:
+        # Read the file content
+        file_content = file.stream.read().decode('utf-8')
+        domains_list = file_content.splitlines()
+
+        # Clean and add domains
+        domains = load_domains()
+        for domain in domains_list:
+            domain = domain.strip()
+            if domain and not any(d["domain"] == domain for d in domains):
+                status = check_domain_status(domain)
+                ssl_info = get_ssl_info(domain)
+                domain_entry = {
+                    "domain": domain,
+                    "status": status,
+                    "ssl_expiration": ssl_info["ssl_expiration"],
+                    "ssl_issuer": ssl_info["ssl_issuer"],
+                    "username": session.get("user")  # Associate domain with current logged-in user
+                }
+                domains.append(domain_entry)
+
+        save_domains(domains)
+        return jsonify({"message": f"Successfully added {len(domains_list)} domains."}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 if __name__ == "__main__":
-    app.run(debug=True, port=8080, host='0.0.0.0')
+    app.run(debug=True, port=8081, host='0.0.0.0')
