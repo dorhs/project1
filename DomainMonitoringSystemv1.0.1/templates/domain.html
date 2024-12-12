@@ -8,13 +8,27 @@
     <link rel="stylesheet" href="/static/domain.css">
 </head>
 <body>
-    <p>Back to Login <a href="/logout">Logout</a></p>
+    
+    <!--onclick="/logout"-->
+    
+    <div class="sidebar">
+    <h2>hi {{ username }} and<br> Welcome to <br>  Domain Monitoring</h2>
+    <ul>
+        <li><a href="/dashboard">Home</a></li>
+        <li><a href="/add_domain_page">Add Domain</a></li>
+        <li><a href="/domain_files">add domain file</a></li>
+        <li><a href="#help">Help</a></li>
+        <li class="logout"><a href="/logout" >Logout</a></li>
+    </ul>
+</div>
+
+
+
+    <!--<p>Back to Login <a href="/logout">Logout</a></p>-->
     <div>
     <h1>Domain Monitoring</h1>
     <form id="domain-form">
-        <label for="domain">Domain:</label>
-        <input type="text" id="domain" name="domain" placeholder="example.com" required>
-        <button type="submit">Add Domain</button>
+       
     </form>
 
 
