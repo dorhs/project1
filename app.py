@@ -51,8 +51,9 @@ def update_schedule():
     value = data.get("value")
 
     try:
-        # Remove existing job
-        scheduler.remove_job(SEARCH_JOB_ID)
+        # Remove existing job if it exists
+        if scheduler.get_job(SEARCH_JOB_ID):
+            scheduler.remove_job(SEARCH_JOB_ID)
 
         # Add new job based on the schedule type
         if frequency_type == "interval":
@@ -75,6 +76,7 @@ def update_schedule():
         return jsonify({"message": "Schedule updated successfully"}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
 
 def load_domains():
     """Load domains from the JSON file, filtering by logged-in user."""
