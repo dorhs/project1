@@ -79,35 +79,31 @@ def update_schedule():
         return jsonify({"message": str(e)}), 500
 
 
-def load_domains():
-    """Load domains from the user's domain.json file."""
-    if 'user' in session:
-        user_file = f"{session['user']}_domain.json"
-        if os.path.exists(user_file):
-            with open(user_file, "r") as file:
-                return json.load(file)
+def perform_search():
+    """Task to check domain status and SSL info."""
+    domains = load_domains(DOMAIN_FILE)  
+    for domain in domains:
+        domain["status"] = check_domain_status(domain["domain"])
+        ssl_info = get_ssl_info(domain["domain"])
+        domain["ssl_expiration"] = ssl_info["ssl_expiration"]
+        domain["ssl_issuer"] = ssl_info["ssl_issuer"]
+    save_domains(domains, DOMAIN_FILE)  # שמור את המידע בחזרה לקובץ
+    print(f"Domain monitoring executed at {datetime.now()}")
+
+
+def load_domains(file_path=DOMAIN_FILE):
+    """Load domains from a JSON file."""
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return json.load(file)
     return []
 
-def save_domains(domains):
-    """Save domains to the user's domain.json file."""
-    if 'user' in session:
-        user_file = f"{session['user']}_domain.json"
-        with open(user_file, "w") as file:
-            json.dump(domains, file, indent=4)
-        print(f"Saved domains to {user_file}")  # Debug print
 
-    # Load existing domains from the general DOMAIN_FILE
-    if os.path.exists(DOMAIN_FILE):
-        with open(DOMAIN_FILE, "r") as file:
-            existing_domains = json.load(file)
-    else:
-        existing_domains = []
-
-
-    # Save the domains back to the JSON file
-    with open(DOMAIN_FILE, "w") as file:
-        json.dump(existing_domains, file, indent=4)
-    print(f"Saved domains: {existing_domains}")  # Debug print to check the saved domains
+def save_domains(domains, file_path=DOMAIN_FILE):
+    """Save domains to a JSON file."""
+    with open(file_path, "w") as file:
+        json.dump(domains, file, indent=4)
+    print(f"Saved domains to {file_path}")  # Debug print
 
 
 def get_ssl_info(domain):
