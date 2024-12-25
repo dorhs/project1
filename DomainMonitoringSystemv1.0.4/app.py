@@ -214,7 +214,7 @@ def get_domains():
 def dashboard():
     username = session.get("user")  # Retrieve the username from the session
     if username:  # Check if the user is logged in
-        return render_template('Domain.html', username=username)
+        return render_template('domain.html', username=username)
     else:
         return redirect("/")  # Redirect to login page if not logged in
 
