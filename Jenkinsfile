@@ -10,8 +10,13 @@ pipeline {
                     cleanWs()
                     echo "Workspace cleaned."
                     sh """
+                    if [ \$(sudo docker ps -a -q | wc -l) -gt 0 ]; then
                     sudo docker rm -f \$(sudo docker ps -a -q)
+                    else
+                    echo "No containers to remove."
+                    fi
                     """
+
                 }
                 echo "Docker containers removed."
             }
