@@ -54,12 +54,6 @@ pipeline {
     }
 
     post {
-        always {
-            echo "Build completed. Cleaning up Docker containers."
-            sh """
-            sudo docker rm -f \$(sudo docker ps -a -q) || true
-            """
-        }
         failure {
             echo "Pipeline failed!"
         }
