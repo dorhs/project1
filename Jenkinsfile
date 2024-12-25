@@ -1,0 +1,65 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    cleanWs()
+                    echo "Workspace cleaned."
+                    sh """
+                    sudo docker rm -f \$(sudo docker ps -a -q)
+                    """
+                }
+                echo "Docker containers removed."
+            }
+        }
+
+        stage('Clone Repo') {
+            steps {
+                script {
+                    git branch: 'json-domain_baha', url: 'https://github.com/dorhs/project1.git'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('project1/DomainMonitoringSystemv1.0.4') {
+                    script {
+                        sh """
+                        sudo docker build -t tpp:temp .
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                script {
+                    sh """
+                    sudo docker run -p 8081:8081 -d tpp:temp
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Build completed. Cleaning up Docker containers."
+            sh """
+            sudo docker rm -f \$(sudo docker ps -a -q) || true
+            """
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+        success {
+            echo "Pipeline succeeded!"
+        }
+    }
+}
