@@ -25,7 +25,7 @@ pipeline {
         stage('Clone Repo') {
             steps {
                 script {
-                    git branch: 'json-domain_baha', url: 'https://github.com/dorhs/project1.git'
+                    git branch: 'main', url: 'https://github.com/dorhs/project1.git'
                 }
             }
         }
