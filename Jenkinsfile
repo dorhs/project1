@@ -32,7 +32,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                dir('project1/DomainMonitoringSystemv1.0.4') {
+                dir('DomainMonitoringSystemv1.0.4') {
                     script {
                         sh """
                         sudo docker build -t tpp:temp .
