@@ -1,5 +1,5 @@
 FROM python
-RUN mkdir /ptt
+RUN mkdir /tpp
 RUN chmod 777 /tpp
 COPY . /tpp
 WORKDIR /tpp
