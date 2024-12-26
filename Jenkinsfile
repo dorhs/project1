@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build appTPP') {
             steps {
                 dir('DomainMonitoringSystemv1.0.4') {
                     script {
@@ -42,11 +42,34 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Run Container TPP') {
             steps {
                 script {
                     sh """
                     sudo docker run -p 8081:8081 -d tpp:temp
+                    """
+                }
+            }
+        }
+    }
+    
+        stage('Docker Build Selenium') {
+          steps {
+               dir('/') {
+                   script {
+                       sh """
+                       sudo docker build -t selenium:selenium .
+                       """
+                    }
+                }
+            }
+        }
+
+        stage('Run Container Selenium') {
+            steps {
+                script {
+                    sh """
+                    sudo docker run -p 8082:8082 -d selenium:selenium
                     """
                 }
             }
