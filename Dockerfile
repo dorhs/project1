@@ -16,7 +16,7 @@ RUN pip install selenium
 ENV DISPLAY=:99
 
 # Copy script into the container
-COPY selenium_script.py /app/selenium_script.py
+COPY selenium.py /app/selenium.py
 
 # Set the working directory
 WORKDIR /app
