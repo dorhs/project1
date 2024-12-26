@@ -1,25 +1,19 @@
 # Base image with Python and Chrome
-FROM python:3.9-slim
+FROM python:3.10
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    chromium \
-    chromium-driver \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python packages
-RUN pip install selenium
-
-# Set environment variables
-ENV DISPLAY=:99
-
-# Copy script into the container
-COPY selenium.py /app/selenium.py
-
-# Set the working directory
 WORKDIR /app
 
+COPY selenium.py /app/selenium.py
+
+# Install Python packages
+RUN pip install --trusted-host pypi.python.org -r requirenments.txt
+
+# Install dependencies
+RUN apt-get update && apt-get install -y wget unzip && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb && \
+    apt-get clean
+
 # Command to run the Selenium script
-CMD ["python", "selenium_script.py"]
+CMD ["python", "selenium.py"]
