@@ -19,10 +19,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install a specific version of Google Chrome (114.0.5735.198-1) from the archive
-RUN wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb && \
-    apt-get install -y ./google-chrome-stable_114.0.5735.198-1_amd64.deb && \
-    rm google-chrome-stable_114.0.5735.198-1_amd64.deb
+# Check if URL is correct and download the Chrome package
+RUN wget -q --spider https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb || \
+    (echo "Download failed, trying alternative URL." && \
+    wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_113.0.5672.63-1_amd64.deb)
+
+# Install Google Chrome
+RUN apt-get update && apt-get install -y ./google-chrome-stable_114.0.5735.198-1_amd64.deb && \
+    rm google-chrome-stable_114.0.5735.198-1_amd64.deb || \
+    (echo "Chrome installation failed" && exit 1)
 
 # Install ChromeDriver for the specific Chrome version
 RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" && \
