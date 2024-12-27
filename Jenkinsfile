@@ -20,7 +20,7 @@ pipeline {
 
                     sh """
                     if [ \$(docker ps -a -q | wc -l) -gt 0 ]; then
-                        docker rm -f \$(docker ps -a -q)
+                        sudo docker rm -f \$(docker ps -a -q)
                     else
                         echo "No containers to remove."
                     fi
