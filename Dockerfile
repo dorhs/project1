@@ -1,9 +1,7 @@
 # Base image with Python
-FROM python
+FROM python:3.10-slim
 
 # Set the working directory inside the container
-RUN mkdir /app
-RUN chmod 777 /app
 WORKDIR /app
 
 # Copy Python script and requirements file into the container
@@ -21,21 +19,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Add Google Chrome's repository and install Chrome
+# Add Google Chrome's repository and install a specific version of Chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable && \
+    apt-get update && apt-get install -y google-chrome-stable=114.0.5735.198-1 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver for the installed Chrome version
-RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1-3) && \
-    echo "Detected Chrome version: $CHROME_VERSION" && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
-    if [ -z "$CHROMEDRIVER_VERSION" ]; then \
-        echo "Failed to fetch ChromeDriver version for Chrome version $CHROME_VERSION"; exit 1; \
-    fi && \
-    echo "Fetching ChromeDriver version: $CHROMEDRIVER_VERSION" && \
-    wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
+# Install ChromeDriver for the specific Chrome version
+RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/ && \
     chmod +x /usr/local/bin/chromedriver && \
@@ -46,4 +37,3 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # Command to run the Selenium script
 CMD ["python", "selenium_test.py"]
-
