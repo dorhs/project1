@@ -55,7 +55,7 @@ pipeline {
     
         stage('Docker Build Selenium') {
           steps {
-               dir('/') {
+               dir('.') {
                    script {
                        sh """
                        sudo docker build -t selenium:selenium .
