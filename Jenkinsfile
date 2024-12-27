@@ -82,6 +82,7 @@ pipeline {
                 script {
                     sh """
                     docker run --network $NETWORK_NAME --name selenium_test -d $SELENIUM_IMAGE
+                    docker logs -f selenium_test
                     """
                 }
             }
