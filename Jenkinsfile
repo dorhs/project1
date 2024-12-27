@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_IMAGE = 'tpp:temp'
-        SELENIUM_IMAGE = 'selenium-chrome' // Using the selenium-chrome image
+        SELENIUM_IMAGE = 'selenium:selenium'
         NETWORK_NAME = 'test_network'
         REPO_URL = 'https://github.com/dorhs/project1.git'
         BRANCH = 'main'
@@ -83,17 +83,21 @@ pipeline {
             }
         }
 
-        stage('Run Selenium Test') {
-            agent {
-                docker {
-                    image 'selenium-chrome'
-                    args '-u root' // Run as root to avoid permission issues
-                }
-            }
+        stage('Docker Build Selenium') {
             steps {
                 script {
-                    // Run the Selenium test script inside the container
-                    sh 'python selenium_test.py'
+                    sh "docker build -t $SELENIUM_IMAGE ."
+                }
+            }
+        }
+
+        stage('Run Selenium Container') {
+            steps {
+                script {
+                    sh """
+                    docker run --network $NETWORK_NAME --name selenium_test -d $SELENIUM_IMAGE
+                    docker logs -f selenium_test
+                    """
                 }
             }
         }
