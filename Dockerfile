@@ -1,4 +1,4 @@
-# Base image with Python
+# Base image with Python and Chrome
 FROM python:3.10
 
 # Set the working directory inside the container
@@ -11,12 +11,21 @@ COPY requirements.txt /app/requirements.txt
 # Install Python dependencies
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Add Google Chrome repository and install the latest stable version of Chrome
-RUN apt-get update && apt-get install -y wget gnupg unzip && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install Chrome and necessary dependencies
+RUN apt-get update && apt-get install -y wget unzip && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb && \
+    apt-get clean
+
+# Install ChromeDriver for headless Chrome
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') && \
+    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
+    wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/local/bin/ && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm chromedriver_linux64.zip
 
 # Command to run the Selenium script
 CMD ["python", "selenium_test.py"]
