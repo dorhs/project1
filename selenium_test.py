@@ -15,8 +15,8 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Set up WebDriver
-# Use ChromeDriverManager to automatically manage ChromeDriver
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+chrome_driver_manager = ChromeDriverManager(version="114.0.5735.90")
+driver = webdriver.Chrome(service=Service(chrome_driver_manager.install()), options=chrome_options)
 
 # Start the script
 try:
