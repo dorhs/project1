@@ -18,9 +18,12 @@ RUN apt-get update && apt-get install -y wget unzip && \
     rm google-chrome-stable_current_amd64.deb && \
     apt-get clean
 
-# Install ChromeDriver for headless Chrome
-RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') && \
+# Install ChromeDriver for the installed Chrome version
+RUN CHROME_VERSION=$(google-chrome --version | grep -oP "\d+\.\d+\.\d+\.\d+") && \
     CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
+    if [ -z "$CHROMEDRIVER_VERSION" ]; then \
+        echo "Failed to fetch ChromeDriver version for Chrome version $CHROME_VERSION"; exit 1; \
+    fi && \
     wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/ && \
