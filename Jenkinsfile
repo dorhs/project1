@@ -15,21 +15,50 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 script {
+                    // Clean Jenkins workspace
                     cleanWs()
                     echo "Workspace cleaned."
 
+                    // Remove all running and stopped containers
                     sh """
                     if [ \$(docker ps -a -q | wc -l) -gt 0 ]; then
-                        sudo docker rm -f \$(docker ps -a -q)
+                        docker rm -f \$(docker ps -a -q)
+                        echo "All containers removed."
                     else
                         echo "No containers to remove."
                     fi
+                    """
+
+                    // Remove unused Docker networks
+                    sh """
                     if [ \$(docker network ls | grep $NETWORK_NAME | wc -l) -eq 1 ]; then
                         docker network rm $NETWORK_NAME
+                        echo "Network $NETWORK_NAME removed."
+                    else
+                        echo "No network named $NETWORK_NAME found."
+                    fi
+                    """
+
+                    // Remove dangling Docker images
+                    sh """
+                    if [ \$(docker images -f "dangling=true" -q | wc -l) -gt 0 ]; then
+                        docker rmi \$(docker images -f "dangling=true" -q)
+                        echo "Dangling images removed."
+                    else
+                        echo "No dangling images to remove."
+                    fi
+                    """
+
+                    // Remove unused Docker volumes
+                    sh """
+                    if [ \$(docker volume ls -q | wc -l) -gt 0 ]; then
+                        docker volume rm \$(docker volume ls -q)
+                        echo "Unused volumes removed."
+                    else
+                        echo "No unused volumes to remove."
                     fi
                     """
                 }
-                echo "Docker containers and networks cleaned."
             }
         }
 
@@ -91,7 +120,16 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline completed."
+            script {
+                // Clean up after pipeline
+                sh """
+                docker rm -f \$(docker ps -a -q) || true
+                docker network rm $NETWORK_NAME || true
+                docker rmi -f $APP_IMAGE $SELENIUM_IMAGE || true
+                docker volume rm \$(docker volume ls -q) || true
+                """
+                echo "Pipeline cleanup complete."
+            }
         }
         failure {
             echo "Pipeline failed!"
