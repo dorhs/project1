@@ -20,10 +20,12 @@ RUN apt-get update && apt-get install -y wget unzip curl && \
 
 # Install ChromeDriver for the installed Chrome version
 RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1-3) && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}") && \
+    echo "Detected Chrome version: $CHROME_VERSION" && \
+    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") && \
     if [ -z "$CHROMEDRIVER_VERSION" ]; then \
         echo "Failed to fetch ChromeDriver version for Chrome version $CHROME_VERSION"; exit 1; \
     fi && \
+    echo "Fetching ChromeDriver version: $CHROMEDRIVER_VERSION" && \
     wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/ && \
