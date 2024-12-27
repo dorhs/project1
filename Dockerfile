@@ -1,7 +1,9 @@
 # Base image with Python
-FROM python:3.10-slim
+FROM python
 
 # Set the working directory inside the container
+RUN mkdir /app
+RUN chmod 777 /app
 WORKDIR /app
 
 # Copy Python script and requirements file into the container
