@@ -5,7 +5,7 @@ FROM python:3.10
 WORKDIR /app
 
 # Copy Python script and requirements file into the container
-COPY selenium.py /app/selenium.py
+COPY selenium_test.py /app/selenium_test.py
 COPY requirements.txt /app/requirements.txt
 
 # Install Python dependencies
@@ -19,4 +19,4 @@ RUN apt-get update && apt-get install -y wget unzip && \
     apt-get clean
 
 # Command to run the Selenium script
-CMD ["python", "selenium.py"]
+CMD ["python", "selenium_test.py"]
