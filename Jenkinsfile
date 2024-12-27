@@ -1,28 +1,121 @@
-# Base image with Python
-FROM python:3.10-slim
+pipeline {
+    agent {
+        label 'docker'
+    }
 
-# Set the working directory inside the container
-WORKDIR /app
+    environment {
+        APP_IMAGE = 'tpp:temp'
+        SELENIUM_IMAGE = 'selenium-chrome' // Using the selenium-chrome image
+        NETWORK_NAME = 'test_network'
+        REPO_URL = 'https://github.com/dorhs/project1.git'
+        BRANCH = 'main'
+    }
 
-# Copy your Python script and dependencies
-COPY selenium_test.py .
-COPY requirements.txt .
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    cleanWs()
+                    echo "Workspace cleaned."
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+                    // Remove all running and stopped containers
+                    sh """
+                    if [ \$(docker ps -a -q | wc -l) -gt 0 ]; then
+                        docker rm -f \$(docker ps -a -q)
+                        echo "All containers removed."
+                    else
+                        echo "No containers to remove."
+                    fi
+                    """
 
-# Install necessary tools and Chrome
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget unzip curl gnupg && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable && \
-    wget -q "https://chromedriver.storage.googleapis.com/116.0.5845.96/chromedriver_linux64.zip" && \
-    unzip chromedriver_linux64.zip && mv chromedriver /usr/local/bin/chromedriver && chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip && apt-get clean && rm -rf /var/lib/apt/lists/*
+                    // Remove unused Docker networks
+                    sh """
+                    if [ \$(docker network ls | grep $NETWORK_NAME | wc -l) -eq 1 ]; then
+                        docker network rm $NETWORK_NAME
+                        echo "Network $NETWORK_NAME removed."
+                    else
+                        echo "No network named $NETWORK_NAME found."
+                    fi
+                    """
 
-# Add ChromeDriver to PATH
-ENV PATH="/usr/local/bin:${PATH}"
+                    // Remove dangling Docker images
+                    sh """
+                    docker image prune -f
+                    echo "Dangling images removed."
+                    """
+                }
+            }
+        }
 
-# Run Selenium script
-CMD ["python", "selenium_test.py"]
+        stage('Clone Repo') {
+            steps {
+                script {
+                    git branch: BRANCH, url: REPO_URL
+                }
+            }
+        }
+
+        stage('Create Docker Network') {
+            steps {
+                script {
+                    sh "docker network create $NETWORK_NAME"
+                }
+            }
+        }
+
+        stage('Docker Build App') {
+            steps {
+                dir('DomainMonitoringSystemv1.0.4') {
+                    script {
+                        sh "docker build -t $APP_IMAGE ."
+                    }
+                }
+            }
+        }
+
+        stage('Run Web App Container') {
+            steps {
+                script {
+                    sh """
+                    docker run --network $NETWORK_NAME --name web_app -p 8081:8081 -d $APP_IMAGE
+                    """
+                }
+            }
+        }
+
+        stage('Run Selenium Test') {
+            agent {
+                docker {
+                    image 'selenium-chrome'
+                    args '-u root' // Run as root to avoid permission issues
+                }
+            }
+            steps {
+                script {
+                    // Run the Selenium test script inside the container
+                    sh 'python selenium_test.py'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Cleanup containers, networks, and dangling images
+                sh """
+                docker rm -f \$(docker ps -a -q) || true
+                docker network rm $NETWORK_NAME || true
+                docker image prune -f || true
+                """
+                echo "Post-cleanup complete."
+            }
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+        success {
+            echo "Pipeline succeeded!"
+        }
+    }
+}
