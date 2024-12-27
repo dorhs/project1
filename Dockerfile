@@ -19,11 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Add Google Chrome's repository and install a specific version of Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable=114.0.5735.198-1 && \
-    rm -rf /var/lib/apt/lists/*
+# Download and install a specific version of Google Chrome (114.0.5735.198-1) from the archive
+RUN wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb && \
+    apt-get install -y ./google-chrome-stable_114.0.5735.198-1_amd64.deb && \
+    rm google-chrome-stable_114.0.5735.198-1_amd64.deb
 
 # Install ChromeDriver for the specific Chrome version
 RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" && \
