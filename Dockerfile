@@ -1,5 +1,5 @@
-# Base image with Python and Chrome
-FROM python:3.10
+# Base image with Python
+FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -9,14 +9,21 @@ COPY selenium_test.py /app/selenium_test.py
 COPY requirements.txt /app/requirements.txt
 
 # Install Python dependencies
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Chrome and necessary dependencies
-RUN apt-get update && apt-get install -y wget unzip curl && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb && \
-    apt-get clean
+# Install necessary tools and Chrome dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add Google Chrome's repository and install Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install ChromeDriver for the installed Chrome version
 RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1-3) && \
@@ -32,5 +39,9 @@ RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1
     chmod +x /usr/local/bin/chromedriver && \
     rm chromedriver_linux64.zip
 
+# Ensure ChromeDriver is in PATH
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Command to run the Selenium script
 CMD ["python", "selenium_test.py"]
+
