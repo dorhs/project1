@@ -15,7 +15,6 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 script {
-                    // Clean Jenkins workspace
                     cleanWs()
                     echo "Workspace cleaned."
 
@@ -41,22 +40,8 @@ pipeline {
 
                     // Remove dangling Docker images
                     sh """
-                    if [ \$(docker images -f "dangling=true" -q | wc -l) -gt 0 ]; then
-                        docker rmi \$(docker images -f "dangling=true" -q)
-                        echo "Dangling images removed."
-                    else
-                        echo "No dangling images to remove."
-                    fi
-                    """
-
-                    // Remove unused Docker volumes
-                    sh """
-                    if [ \$(docker volume ls -q | wc -l) -gt 0 ]; then
-                        docker volume rm \$(docker volume ls -q)
-                        echo "Unused volumes removed."
-                    else
-                        echo "No unused volumes to remove."
-                    fi
+                    docker image prune -f
+                    echo "Dangling images removed."
                     """
                 }
             }
@@ -121,14 +106,13 @@ pipeline {
     post {
         always {
             script {
-                // Clean up after pipeline
+                // Cleanup containers, networks, and dangling images
                 sh """
                 docker rm -f \$(docker ps -a -q) || true
                 docker network rm $NETWORK_NAME || true
-                docker rmi -f $APP_IMAGE $SELENIUM_IMAGE || true
-                docker volume rm \$(docker volume ls -q) || true
+                docker image prune -f || true
                 """
-                echo "Pipeline cleanup complete."
+                echo "Post-cleanup complete."
             }
         }
         failure {
