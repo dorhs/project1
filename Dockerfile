@@ -6,7 +6,7 @@ WORKDIR /app
 COPY selenium.py /app/selenium.py
 
 # Install Python packages
-RUN pip install --trusted-host pypi.python.org -r requirenments.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Install dependencies
 RUN apt-get update && apt-get install -y wget unzip && \
