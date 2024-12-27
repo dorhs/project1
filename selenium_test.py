@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from webdriver_manager.chrome import ChromeDriverManager  
 
 # Configure headless Chrome
 chrome_options = Options()
@@ -14,12 +15,12 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Set up WebDriver
-# Path to Chromedriver in the container
+# Use ChromeDriverManager to automatically manage ChromeDriver
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 # Start the script
 try:
-    driver.get("http://18.237.98.47:8081/")
+    driver.get("http://44.243.219.74:8081/")
     print('Entering the web page')
 
     WebDriverWait(driver, 2).until(
