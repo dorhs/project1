@@ -11,12 +11,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 # Configure headless Chrome
 chrome_options = Options()
 chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Set up WebDriver
-chrome_driver_manager = ChromeDriverManager(version="114.0.5735.90")
-driver = webdriver.Chrome(service=Service(chrome_driver_manager.install()), options=chrome_options)
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Start the script
 try:
