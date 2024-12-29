@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_IMAGE = 'tpp:temp'
-        SELENIUM_IMAGE = 'selenium/standalone-chrome:4.27.0-20241225'
+        SELENIUM_IMAGE = 'python'
         NETWORK_NAME = 'test_network'
         REPO_URL = 'https://github.com/dorhs/project1.git'
         BRANCH = 'main'
@@ -95,7 +95,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run --network $NETWORK_NAME --name selenium_test -d $SELENIUM_IMAGE
+                    sudo docker run --network $NETWORK_NAME --name selenium_test -d $SELENIUM_IMAGE
                     docker logs -f selenium_test
                     """
                 }
