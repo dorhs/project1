@@ -20,7 +20,7 @@ driver = webdriver.Chrome(options=chrome_options)
 
 # Start the script
 try:
-    driver.get("http://35.92.146.232:8081/")
+    driver.get("http://localhost:8081/")
     print('Entering the web page')
 
     WebDriverWait(driver, 2).until(
