@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_IMAGE = 'tpp:temp'
-        SELENIUM_IMAGE = 'python'
+        SELENIUM_IMAGE = 'selenium:python'
         NETWORK_NAME = 'test_network'
         REPO_URL = 'https://github.com/dorhs/project1.git'
         BRANCH = 'main'
@@ -63,30 +63,13 @@ pipeline {
             }
         }
 
-        stage('Docker Build App') {
+        stage('Docker Build App + Run App') {
             steps {
                 dir('DomainMonitoringSystemv1.0.4') {
                     script {
                         sh "docker build -t $APP_IMAGE ."
+                        sh "docker run --network $NETWORK_NAME --name web_app -p 8081:8081 -d $APP_IMAGE"
                     }
-                }
-            }
-        }
-
-        stage('Run Web App Container') {
-            steps {
-                script {
-                    sh """
-                    docker run --network $NETWORK_NAME --name web_app -p 8081:8081 -d $APP_IMAGE
-                    """
-                }
-            }
-        }
-
-        stage('Docker Build Selenium') {
-            steps {
-                script {
-                    sh "docker build -t $SELENIUM_IMAGE ."
                 }
             }
         }
@@ -95,7 +78,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    sudo docker run --network $NETWORK_NAME --name selenium_test -d $SELENIUM_IMAGE
+                    sudo docker run --network host --name selenium_test -d $SELENIUM_IMAGE
                     docker logs -f selenium_test
                     """
                 }
