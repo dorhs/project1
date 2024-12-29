@@ -21,7 +21,7 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Start the script
 try:
-    driver.get("http://44.243.219.74:8081/")
+    driver.get("http://34.210.227.66:8081/")
     print('Entering the web page')
 
     WebDriverWait(driver, 2).until(
