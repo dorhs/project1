@@ -6,10 +6,10 @@ WORKDIR /app
 
 # Copy your Python script and requirements file into the container
 COPY selenium_test.py /app/
-COPY requirements.txt /app/
+#COPY requirements.txt /app/
 
 # Install any additional Python dependencies if required
-RUN pip install --no-cache-dir -r requirements.txt
+#RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the command to run your Selenium script
 CMD ["python", "selenium_test.py"]
