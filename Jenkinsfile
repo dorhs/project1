@@ -68,7 +68,7 @@ pipeline {
                 dir('DomainMonitoringSystemv1.0.4') {
                     script {
                         sh "docker build -t $APP_IMAGE ."
-                        sh "docker run --network $NETWORK_NAME --name web_app -p 8081:8081 -d $APP_IMAGE"
+                        sh "docker run --network host --name web_app -p 8081:8081 -d $APP_IMAGE"
                     }
                 }
             }
