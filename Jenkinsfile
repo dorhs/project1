@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_IMAGE = 'tpp:temp'
-        SELENIUM_IMAGE = 'selenium:python'
+        SELENIUM_IMAGE = 'python'
         NETWORK_NAME = 'test_network'
         REPO_URL = 'https://github.com/dorhs/project1.git'
         BRANCH = 'main'
