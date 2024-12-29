@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_IMAGE = 'tpp:temp'
-        SELENIUM_IMAGE = 'selenium:selenium'
+        SELENIUM_IMAGE = 'selenium/standalone-chrome:4.27.0-20241225'
         NETWORK_NAME = 'test_network'
         REPO_URL = 'https://github.com/dorhs/project1.git'
         BRANCH = 'main'
