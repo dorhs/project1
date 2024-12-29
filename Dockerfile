@@ -1,15 +1,35 @@
-# Use the Selenium standalone Chrome image as the base image
 FROM selenium/standalone-chrome:4.27.0-20241225
 
-# Set the working directory inside the container
+# Switch to root user for privileged operations
+USER root
+
+# Fix permissions and setup
+RUN rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /var/lib/apt/lists/partial && \
+    chmod -R 755 /var/lib/apt/lists && \
+    sed -i '/^deb.*main.*$/!b;n;d' /etc/apt/sources.list
+
+# Install Python, pip, and venv
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3-venv && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    apt-get clean
+
+# Create the working directory and fix permissions
 WORKDIR /app
+RUN mkdir -p /app && chown seluser:seluser /app
 
-# Copy your Python script and requirements file into the container
+# Switch to seluser
+USER seluser
+
+# Copy application files
 COPY selenium_test.py /app/
-#COPY requirements.txt /app/
+COPY requirements.txt /app/
 
-# Install any additional Python dependencies if required
-#RUN pip install --no-cache-dir -r requirements.txt
+# Create a virtual environment and install dependencies
+RUN python3 -m venv /app/venv && \
+    /app/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Set the command to run your Selenium script
-CMD ["python", "selenium_test.py"]
+# Run the application using the virtual environment
+CMD ["/app/venv/bin/python", "selenium_test.py"]
+
