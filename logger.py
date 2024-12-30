@@ -17,6 +17,4 @@ logging.basicConfig(
     ]
 )
 
-url='http://localhost:8081'
-test_email=os.getenv('test_email')
-test_password=os.getenv('test_password')
+
