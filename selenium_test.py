@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 import time
 from webdriver_manager.chrome import ChromeDriverManager  
-from logger import logging , url , test_email , test_password
+from logger import logging , url
 import os
 from selenium.common.exceptions import WebDriverException
 
