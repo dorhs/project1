@@ -78,7 +78,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    sudo docker run --network host --name selenium_test $SELENIUM_IMAGE
+                    sudo docker run --network host --name selenium_test seleniumtest/sele:1.0.0
                     """
                 }
             }
