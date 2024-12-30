@@ -64,8 +64,11 @@ try:
     time.sleep(2)
 
     try:
-        input_element = driver.find_element(By.ID, "Add Domain")
-        input_element.send_keys(Keys.ENTER)
+        # Wait for the element to be present
+        add_domain_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "add-domain"))
+        )
+        add_domain_button.click()
         logging.info('Entering Add domain page')
     except NoSuchElementException:
         logging.error("Add Domain button not found")
