@@ -23,7 +23,7 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 try:
     driver = webdriver.Chrome(options=chrome_options)
 except WebDriverException as e:
-    print(f"Failed to initialize WebDriver: {e}")
+    logging.error(f"Failed to initialize WebDriver: {e}")
     exit(1)
 
 # Start the script
@@ -31,10 +31,10 @@ try:
     try:
         logging.info('Register test Started')
         driver.get("http://localhost:8081/")
-        print('Entering the web page')
+        logging.info('Entering the web page')
         logging.info('Page loaded')
     except WebDriverException as e:
-        print(f"Failed to load webpage: {e}")
+        logging.error(f"Failed to load webpage: {e}")
         raise
 
     try:
@@ -42,23 +42,23 @@ try:
             EC.presence_of_element_located((By.ID, 'username'))
         )
     except TimeoutException:
-        print("Timeout waiting for username field to load")
+        logging.error("Timeout waiting for username field to load")
         raise
 
     try:
         input_element = driver.find_element(By.ID, "username")
         input_element.send_keys('qqqq')
-        print('Username was entered')
+        logging.info('Username was entered')
     except NoSuchElementException:
-        print("Username field not found")
+        logging.error("Username field not found")
         raise
 
     try:
         input_element = driver.find_element(By.ID, "password")
         input_element.send_keys('1111' + Keys.RETURN)
-        print('Providing password')
+        logging.info('Providing password')
     except NoSuchElementException:
-        print("Password field not found")
+        logging.error("Password field not found")
         raise
 
     time.sleep(2)
@@ -66,9 +66,9 @@ try:
     try:
         input_element = driver.find_element(By.ID, "Add Domain")
         input_element.send_keys(Keys.ENTER)
-        print('Entering Add domain page')
+        logging.info('Entering Add domain page')
     except NoSuchElementException:
-        print("Add Domain button not found")
+        logging.error("Add Domain button not found")
         raise
 
     time.sleep(2)
@@ -76,9 +76,9 @@ try:
     try:
         input_element = driver.find_element(By.ID, "domain")
         input_element.send_keys('yahoo.com' + Keys.RETURN)
-        print('Adding domain')
+        logging.info('Adding domain')
     except NoSuchElementException:
-        print("Domain input field not found")
+        logging.error("Domain input field not found")
         raise
 
     time.sleep(2)
@@ -86,19 +86,19 @@ try:
     try:
         home_link = driver.find_element(By.XPATH, '//a[@href="/dashboard"]')
         driver.execute_script("arguments[0].click();", home_link)
-        print('Entering Dashboard')
-        print('Back to dashboard')
+        logging.info('Entering Dashboard')
+        logging.info('Back to dashboard')
     except NoSuchElementException:
-        print("Dashboard link not found")
+        logging.error("Dashboard link not found")
         raise
     except WebDriverException as e:
-        print(f"Failed to click dashboard link: {e}")
+        logging.error(f"Failed to click dashboard link: {e}")
         raise
 
-    print('Test Finished Successfully')
+    logging.info('Test Finished Successfully')
     time.sleep(3)
 
 except Exception as e:
-    print(f"Test failed with error: {e}")
+    logging.error(f"Test failed with error: {e}")
 finally:
     driver.quit()
