@@ -1,12 +1,16 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
-import logging
 import time
+from webdriver_manager.chrome import ChromeDriverManager  
+from logger import logging , url
+import os
+from selenium.common.exceptions import WebDriverException
 
 # Configure headless Chrome
 chrome_options = Options()
@@ -18,62 +22,86 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 # Set up WebDriver
 try:
     driver = webdriver.Chrome(options=chrome_options)
-    logging.info("WebDriver initialized successfully")
 except WebDriverException as e:
     logging.error(f"Failed to initialize WebDriver: {e}")
     exit(1)
 
 # Start the script
 try:
-    logging.info('Register test Started')
-    driver.get("http://localhost:8081/")
-    logging.info('Web page loaded')
+    try:
+        logging.info('Register test Started')
+        driver.get("http://localhost:8081/")
+        logging.info('Entering the web page')
+        logging.info('Page loaded')
+    except WebDriverException as e:
+        logging.error(f"Failed to load webpage: {e}")
+        raise
+    time.sleep(2)
+    try:
+        WebDriverWait(driver, 2).until(
+            EC.presence_of_element_located((By.ID, 'username'))
+        )
+    except TimeoutException:
+        logging.error("Timeout waiting for username field to load")
+        raise
+    time.sleep(2)
+    try:
+        input_element = driver.find_element(By.ID, "username")
+        input_element.send_keys('qqqq')
+        logging.info('Username was entered')
+    except NoSuchElementException:
+        logging.error("Username field not found")
+        raise
+    time.sleep(2)
+    try:
+        input_element = driver.find_element(By.ID, "password")
+        input_element.send_keys('1111' + Keys.RETURN)
+        logging.info('Providing password')
+    except NoSuchElementException:
+        logging.error("Password field not found")
+        raise
 
-    # Wait for username field
-    username_field = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "username"))
-    )
-    username_field.send_keys("qqqq")
-    logging.info("Username entered")
+    time.sleep(2)
 
-    # Wait for password field
-    password_field = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "password"))
-    )
-    password_field.send_keys("1111" + Keys.RETURN)
-    logging.info("Password entered")
+    try:
+        # Wait for the element to be present
+        add_domain_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "Add-Domain"))
+        )
+        add_domain_button.click()
+        logging.info('Entering Add domain page')
+    except NoSuchElementException:
+        logging.error("Add Domain button not found")
+        raise
 
-    # Wait for Add Domain button
-    add_domain_button = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "Add Domain"))  # Ensure ID matches HTML
-    )
-    add_domain_button.click()
-    logging.info("Navigated to Add Domain page")
+    time.sleep(2)
 
-    # Add a domain
-    domain_field = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "domain"))
-    )
-    domain_field.send_keys("yahoo.com" + Keys.RETURN)
-    logging.info("Domain added")
+    try:
+        input_element = driver.find_element(By.ID, "domain")
+        input_element.send_keys('yahoo.com' + Keys.RETURN)
+        logging.info('Adding domain')
+    except NoSuchElementException:
+        logging.error("Domain input field not found")
+        raise
 
-    # Navigate back to Dashboard
-    dashboard_link = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, '//a[@href="/dashboard"]'))
-    )
-    driver.execute_script("arguments[0].click();", dashboard_link)
-    logging.info("Navigated back to Dashboard")
+    time.sleep(2)
 
-    logging.info("Test Finished Successfully")
+    try:
+        home_link = driver.find_element(By.XPATH, '//a[@href="/dashboard"]')
+        driver.execute_script("arguments[0].click();", home_link)
+        logging.info('Entering Dashboard')
+        logging.info('Back to dashboard')
+    except NoSuchElementException:
+        logging.error("Dashboard link not found")
+        raise
+    except WebDriverException as e:
+        logging.error(f"Failed to click dashboard link: {e}")
+        raise
 
-except NoSuchElementException as e:
-    logging.error(f"Element not found: {e}")
-    driver.save_screenshot("debug_screenshot.png")
-    with open("debug_page_source.html", "w", encoding="utf-8") as f:
-        f.write(driver.page_source)
-except TimeoutException as e:
-    logging.error(f"Timeout occurred: {e}")
-except WebDriverException as e:
-    logging.error(f"WebDriver error: {e}")
+    logging.info('Test Finished Successfully')
+    time.sleep(3)
+
+except Exception as e:
+    logging.error(f"Test failed with error: {e}")
 finally:
     driver.quit()
