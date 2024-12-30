@@ -36,7 +36,7 @@ try:
     except WebDriverException as e:
         logging.error(f"Failed to load webpage: {e}")
         raise
-
+    time.sleep(2)
     try:
         WebDriverWait(driver, 2).until(
             EC.presence_of_element_located((By.ID, 'username'))
@@ -44,7 +44,7 @@ try:
     except TimeoutException:
         logging.error("Timeout waiting for username field to load")
         raise
-
+    time.sleep(2)
     try:
         input_element = driver.find_element(By.ID, "username")
         input_element.send_keys('qqqq')
@@ -52,7 +52,7 @@ try:
     except NoSuchElementException:
         logging.error("Username field not found")
         raise
-
+    time.sleep(2)
     try:
         input_element = driver.find_element(By.ID, "password")
         input_element.send_keys('1111' + Keys.RETURN)
@@ -66,7 +66,7 @@ try:
     try:
         # Wait for the element to be present
         add_domain_button = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "add-domain"))
+            EC.presence_of_element_located((By.ID, "Add-Domain"))
         )
         add_domain_button.click()
         logging.info('Entering Add domain page')
