@@ -8,6 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 import time
 from webdriver_manager.chrome import ChromeDriverManager  
+from logger import logging , url , test_email , test_password
+import os
+from selenium.common.exceptions import WebDriverException
 
 # Configure headless Chrome
 chrome_options = Options()
@@ -26,8 +29,10 @@ except WebDriverException as e:
 # Start the script
 try:
     try:
+        logging.info('Register test Started')
         driver.get("http://localhost:8081/")
         print('Entering the web page')
+        logging.info('Page loaded')
     except WebDriverException as e:
         print(f"Failed to load webpage: {e}")
         raise
