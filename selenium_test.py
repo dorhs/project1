@@ -66,7 +66,7 @@ try:
     try:
         # Wait for the element to be present
         add_domain_button = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "Add-Domain"))
+            EC.presence_of_element_located((By.ID, "Add Domain"))
         )
         add_domain_button.click()
         logging.info('Entering Add domain page')
