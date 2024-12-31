@@ -64,40 +64,39 @@ try:
     time.sleep(2)
 
     try:
-        # חכה שהסרגל הצדדי (sidebar) יטען
-        WebDriverWait(driver, 10).until(
+        # נחכה שהסרגל הצדדי יטען
+        sidebar = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "sidebar"))
         )
         
-        # מצא את הקישור Add Domain על פי המזהה שלו
+        # נגדיר גודל חלון ברור
+        driver.set_window_size(1920, 1080)
+        
+        # נמצא את הקישור Add Domain
         add_domain_link = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, 'a#Add\\ Domain'))
         )
         
-        # לחץ על הקישור
-        add_domain_link.click()
-        # או לחלופין אם הקליק הרגיל לא עובד:
-        # driver.execute_script("arguments[0].click();", add_domain_link)
+        # ננסה לגלול אל האלמנט לפני הלחיצה
+        driver.execute_script("arguments[0].scrollIntoView(true);", add_domain_link)
         
-        logging.info('Entering Add domain page')
-    except TimeoutException:
+        # נוסיף המתנה קצרה אחרי הגלילה
+        time.sleep(1)
+        
+        # ננסה ללחוץ באמצעות JavaScript
+        driver.execute_script("arguments[0].click();", add_domain_link)
+        
+        logging.info('Successfully clicked Add Domain link')
+        
+    except TimeoutException as e:
         logging.error("Timeout waiting for Add Domain link")
-        # הוסף מידע נוסף לדיבוג
         logging.error(f"Current URL: {driver.current_url}")
-        logging.error(f"Page source: {driver.page_source}")
         raise
     except Exception as e:
         logging.error(f"Failed to click Add Domain link: {str(e)}")
-        raise
-
-    time.sleep(2)
-
-    try:
-        input_element = driver.find_element(By.ID, "domain")
-        input_element.send_keys('yahoo.com' + Keys.RETURN)
-        logging.info('Adding domain')
-    except NoSuchElementException:
-        logging.error("Domain input field not found")
+        # נוסיף מידע נוסף לדיבוג
+        logging.error(f"Element position: {add_domain_link.location if 'add_domain_link' in locals() else 'Unknown'}")
+        logging.error(f"Window size: {driver.get_window_size()}")
         raise
 
     time.sleep(2)
