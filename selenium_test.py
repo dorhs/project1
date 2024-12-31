@@ -49,7 +49,7 @@ try:
         input_element = driver.find_element(By.ID, "username")
         input_element.send_keys('baha')
         logging.info('Username was entered')
-        print('test')
+        
     except NoSuchElementException:
         logging.error("Username field not found")
         raise
