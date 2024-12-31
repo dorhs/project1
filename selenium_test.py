@@ -47,7 +47,7 @@ try:
     time.sleep(2)
     try:
         input_element = driver.find_element(By.ID, "username")
-        input_element.send_keys('qqqq')
+        input_element.send_keys('baha')
         logging.info('Username was entered')
     except NoSuchElementException:
         logging.error("Username field not found")
@@ -55,7 +55,7 @@ try:
     time.sleep(2)
     try:
         input_element = driver.find_element(By.ID, "password")
-        input_element.send_keys('1111' + Keys.RETURN)
+        input_element.send_keys('baha' + Keys.RETURN)
         logging.info('Providing password')
     except NoSuchElementException:
         logging.error("Password field not found")
