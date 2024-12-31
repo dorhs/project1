@@ -107,11 +107,11 @@ try:
             
             time.sleep(2)
         
-    except TimeoutException as e:
-        logging.error("Timeout waiting for Add Domain link")
-        logging.error(f"Current URL: {driver.current_url}")
-        logging.error(f"Page source: {driver.page_source}")
-        raise
+        except TimeoutException as e:
+            logging.error("Timeout waiting for Add Domain link")
+            logging.error(f"Current URL: {driver.current_url}")
+            logging.error(f"Page source: {driver.page_source}")
+            raise
     except Exception as e:
         logging.error(f"Failed to click Add Domain link: {str(e)}")
         # נוסיף מידע נוסף לדיבוג
