@@ -74,7 +74,7 @@ pipeline {
             }
         }
 
-        stage('Run Selenium Container') {
+        stage('Run Selenium Container + Test the app') {
             steps {
                 script {
                     sh """
