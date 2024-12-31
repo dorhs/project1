@@ -64,20 +64,30 @@ try:
     time.sleep(2)
 
     try:
-        # Wait for the page to load after login
+        # חכה שהסרגל הצדדי (sidebar) יטען
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "dashboard"))  # or another reliable element that appears after login
+            EC.presence_of_element_located((By.CLASS_NAME, "sidebar"))
         )
-        time.sleep(1)  # Small buffer time for JavaScript to execute
-    
-        # Then look for Add Domain button
-        add_domain_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "Add Domain"))
+        
+        # מצא את הקישור Add Domain על פי המזהה שלו
+        add_domain_link = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'a#Add\\ Domain'))
         )
-        add_domain_button.click()
+        
+        # לחץ על הקישור
+        add_domain_link.click()
+        # או לחלופין אם הקליק הרגיל לא עובד:
+        # driver.execute_script("arguments[0].click();", add_domain_link)
+        
         logging.info('Entering Add domain page')
     except TimeoutException:
-        logging.error("Page did not load properly after login")
+        logging.error("Timeout waiting for Add Domain link")
+        # הוסף מידע נוסף לדיבוג
+        logging.error(f"Current URL: {driver.current_url}")
+        logging.error(f"Page source: {driver.page_source}")
+        raise
+    except Exception as e:
+        logging.error(f"Failed to click Add Domain link: {str(e)}")
         raise
 
     time.sleep(2)
