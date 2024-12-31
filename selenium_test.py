@@ -88,24 +88,24 @@ try:
         
         logging.info('Successfully clicked Add Domain link')
         
-    try:
-        # נמתין לטעינת הדף החדש ולהופעת שדה הקלט
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "domain"))
-        )
-        
-        # נמצא את שדה הקלט ונכניס את הדומיין
-        input_element = driver.find_element(By.ID, "domain")
-        input_element.clear()  # ננקה כל טקסט קיים
-        input_element.send_keys('yahoo.com')
-        
-        # נחפש את כפתור השליחה ונלחץ עליו
-        submit_button = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-        submit_button.click()
-        
-        logging.info('Domain submitted successfully')
-        
-        time.sleep(2)
+        try:
+            # נמתין לטעינת הדף החדש ולהופעת שדה הקלט
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.ID, "domain"))
+            )
+            
+            # נמצא את שדה הקלט ונכניס את הדומיין
+            input_element = driver.find_element(By.ID, "domain")
+            input_element.clear()  # ננקה כל טקסט קיים
+            input_element.send_keys('yahoo.com')
+            
+            # נחפש את כפתור השליחה ונלחץ עליו
+            submit_button = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
+            submit_button.click()
+            
+            logging.info('Domain submitted successfully')
+            
+            time.sleep(2)
         
     except TimeoutException as e:
         logging.error("Timeout waiting for Add Domain link")
