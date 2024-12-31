@@ -63,22 +63,22 @@ try:
 
     time.sleep(2)
 
-try:
-    # Wait for the page to load after login
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "dashboard"))  # or another reliable element that appears after login
-    )
-    time.sleep(1)  # Small buffer time for JavaScript to execute
+    try:
+        # Wait for the page to load after login
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "dashboard"))  # or another reliable element that appears after login
+        )
+        time.sleep(1)  # Small buffer time for JavaScript to execute
     
-    # Then look for Add Domain button
-    add_domain_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.ID, "Add Domain"))
-    )
-    add_domain_button.click()
-    logging.info('Entering Add domain page')
-except TimeoutException:
-    logging.error("Page did not load properly after login")
-    raise
+        # Then look for Add Domain button
+        add_domain_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "Add Domain"))
+        )
+        add_domain_button.click()
+        logging.info('Entering Add domain page')
+    except TimeoutException:
+        logging.error("Page did not load properly after login")
+        raise
 
     time.sleep(2)
 
