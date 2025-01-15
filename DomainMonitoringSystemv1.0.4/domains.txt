@@ -1,4 +1,0 @@
-google.co.il
-google.com
-oracle.com
-python.com

@@ -1,9 +1,0 @@
-apt -y update && apt -y install docker.io
-hostnamectl set-hostname jenkins
-mkdir jenkins_home
-sudo chown -R 1000:1000 ./jenkins_home
-docker run -d \
-  --name jenkins \
-  -p 8080:8080 \
-  -v ./jenkins_home:/var/jenkins_home \
-  jenkins/jenkins
