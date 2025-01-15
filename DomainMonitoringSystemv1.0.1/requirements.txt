@@ -1,4 +1,0 @@
-Flask
-requests
-authlib
-flask_apscheduler
