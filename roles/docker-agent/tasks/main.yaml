@@ -1,0 +1,130 @@
+# Ensure Java is installed
+- name: Ensure Java is installed
+  apt:
+    name: default-jdk
+    state: present
+    update_cache: yes
+  become: yes
+
+# Install Docker and set up the agent environment
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Add Jenkins user to the Docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+  become: yes
+
+- name: Enable and start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Create a Jenkins agent directory
+  file:
+    path: /home/jenkins/agent
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+  become: yes
+
+# # Step 1: Get CSRF crumb
+# - name: Get CSRF crumb
+#   uri:
+#     url: "http://{{ client_dns }}:8080/crumbIssuer/api/json"
+#     method: GET
+#     user: "{{ jenkins_admin_user }}"
+#     password: "{{ jenkins_admin_password }}"
+#     return_content: yes
+#   register: csrf_response
+#   delegate_to: localhost
+#   become: no
+
+# # Step 2: Create Jenkins Agent via API
+# - name: Show public ip
+#   debug: 
+#     msg: "The public IP address of ec2_jenkins is: {{ client_dns }}"
+
+# - name: Create Jenkins agent via API
+#   uri:
+#     url: "http://{{ client_dns }}:8080/computer/doCreateItem"
+#     method: POST
+#     user: "{{ jenkins_admin_user }}"
+#     password: "{{ jenkins_admin_password }}"
+#     body: |
+#       name={{ inventory_hostname }}&type=hudson.slaves.DumbSlave&json={{ {
+#         "name": "docker-agent",
+#         "nodeDescription": "Docker Agent",
+#         "remoteFS": "/home/jenkins/agent",
+#         "numExecutors": "1",
+#         "mode": "NORMAL",
+#         "retentionStrategy": {"stapler-class": "hudson.slaves.RetentionStrategy$Always"},
+#         "launcher": {
+#           "stapler-class": "hudson.slaves.JNLPLauncher",
+#           "workDirSettings": {
+#             "disabled": false,
+#             "internalDir": "remoting",
+#             "failIfWorkDirIsMissing": false
+#           }
+#         },
+#         "nodeProperties": []
+#       } | to_json }}
+#     headers:
+#       Content-Type: "application/x-www-form-urlencoded"
+#       # Jenkins-Crumb: "{{ csrf_response.json.crumb }}"
+#   register: create_agent_response
+#   become: false
+
+# Step 3: Download Jenkins Agent Jar
+- name: Download Jenkins agent jar
+  get_url:
+    url: "http://{{ client_dns }}:8080/jnlpJars/agent.jar"
+    dest: /home/jenkins/agent/agent.jar
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+  become: yes
+
+# Step 4: Set Up Jenkins Agent as a Systemd Service
+- name: Set up systemd service for Jenkins agent
+  copy:
+    dest: /etc/systemd/system/jenkins-agent.service
+    content: |
+      [Unit]
+      Description=Jenkins Agent
+      After=network.target
+
+      [Service]
+      User=jenkins
+      Group=jenkins
+      WorkingDirectory=/home/jenkins/agent
+      ExecStart=/usr/bin/java -jar /home/jenkins/agent/agent.jar -url http://{{ client_dns }}:8080 -name {{ inventory_hostname }} -secret {{ jenkins_agent_secret }} -workDir /home/jenkins/agent
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Reload systemd to apply Jenkins agent service
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start Jenkins agent service
+  service:
+    name: jenkins-agent
+    state: started
+    enabled: yes
+  become: yes
