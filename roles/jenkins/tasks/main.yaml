@@ -55,6 +55,35 @@
     - /var/jenkins_home/init.groovy.d
   become: yes
 
+# Copy the node configuration file (config.xml) for docker-agent
+- name: Copy node configuration (docker-agent) to Jenkins home
+  copy:
+    dest: /var/jenkins_home/nodes/docker-agent/config.xml
+    mode: '0644'
+    owner: 1000
+    group: 1000
+    content: |
+      <?xml version='1.1' encoding='UTF-8'?>
+      <slave>
+        <name>docker-agent</name>
+        <description>test</description>
+        <remoteFS>/var/jenkins_home</remoteFS>
+        <numExecutors>1</numExecutors>
+        <mode>EXCLUSIVE</mode>
+        <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+        <launcher class="hudson.slaves.JNLPLauncher">
+          <workDirSettings>
+            <disabled>false</disabled>
+            <internalDir>remoting</internalDir>
+            <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
+          </workDirSettings>
+          <webSocket>false</webSocket>
+        </launcher>
+        <label>docker</label>
+        <nodeProperties/>
+      </slave>
+  become: yes
+
 - name: Copy plugins.txt to build context
   copy:
     dest: /tmp/jenkins_files/plugins.txt
@@ -134,7 +163,7 @@
             allowAnonymousRead: false
         remotingSecurity:
           enabled: true
-        crumbIssuer: null    
+        crumbIssuer: null    # This completely disables CSRF protection
   loop:
     - /tmp/jenkins_files/casc.yaml
     - /var/jenkins_home/jenkins.yaml
