@@ -79,7 +79,7 @@ pipeline {
             environment {
                 DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
                 DOCKER_HUB_USERNAME = 'dengol'
-                DOCKER_HUB_REPO = 'dengol/tpp-app'
+                DOCKER_HUB_REPO = 'tpp-app'
                 GIT_COMMIT_SHORT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
             }
             steps {
